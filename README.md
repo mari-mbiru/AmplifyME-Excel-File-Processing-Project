@@ -97,8 +97,9 @@ docker run -p 8080:8080 excel-grader
 - The Apache POI CellWalk Api is used for traversing the cell ranges defined in the grading rows. This enables efficient
   traversal of multidimensional cell ranges.
 - Grading is done by implementing the CellHandler interface in an abstract Grading class. This enables the use of
-  different grading strategies in case new Grading types are added. This design decision was made when CorrForm and
-  CorrVal would require separate handlers.
+  different grading strategies in case new Grading types are added. This design decision was made when it was expected
+  that CorrForm and
+  CorrVal grading types. would require separate handlers.
 - Cell value comparison for both CorrVal and CorrForm approaches is done by converting all cell values to a string
   regardless of type.
   - NUMERIC type: significant digits are kept for numbers and fractions (so 1/3 and 0.33333 will have different string
@@ -126,7 +127,7 @@ Integration tests cover:
 - Grading of all files provided in the project briefing.
   > In the file : "Candidate Sample Answer Sheet CorrVal + CorrForm" the cell C8 in the Grading sheet had the value "
   CorForm", this was considered an error and modified to "CorrForm" ensure tests passed to match the expected value in
-  the project brief
+  the project brief.
 - Created some additional excel workbook files to carry out integration tests for the following:
   - Ensure Value type are converted correctly (e.g repeating fractions are different from decimal representation,
     different error codes are treated as different values)
