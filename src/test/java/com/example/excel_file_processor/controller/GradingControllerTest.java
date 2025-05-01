@@ -1,11 +1,12 @@
 package com.example.excel_file_processor.controller;
 
 import com.example.excel_file_processor.model.GradingResponse;
+import com.example.excel_file_processor.model.SimpleAppException;
 import com.example.excel_file_processor.service.GradingService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -15,6 +16,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.Matchers.contains;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,7 +38,7 @@ public class GradingControllerTest {
         GradingResponse mockResponse = new GradingResponse(9.0, 10.0, List.of("Error Grading"), dateString, dateString, 90.0);
 
         // When
-        Mockito.when(gradingService.gradeWorkbook(Mockito.any(), Mockito.any()))
+        when(gradingService.gradeWorkbook(any(), any()))
                 .thenReturn(mockResponse);
 
         MockMultipartFile masterFile = new MockMultipartFile("master_file", "master.xlsx", "application/vnd.ms-excel", new byte[10]);
@@ -90,5 +93,30 @@ public class GradingControllerTest {
         result
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Parameter 'master_file' is required"));
+    }
+
+    @Test
+    void gradeExcelSheet_shouldReturnUnprocessableEntity_whenServiceThrowsUnprocessableEntity() throws Exception {
+
+        //Given
+        MockMultipartFile masterFile = new MockMultipartFile(
+                "master_file", "master.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", new byte[0]
+        );
+        MockMultipartFile studentFile = new MockMultipartFile(
+                "student_file", "student.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", new byte[0]
+        );
+
+        when(gradingService.gradeWorkbook(any(), any()))
+                .thenThrow(new SimpleAppException("The masterfile is missing the Grading sheet.", HttpStatus.UNPROCESSABLE_ENTITY));
+
+        //Then
+        ResultActions result = mockMvc.perform(multipart("/api/v1/excel/grade")
+                .file(masterFile)
+                .file(studentFile));
+
+        //Then
+        result
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message").value("The masterfile is missing the Grading sheet."));
     }
 }

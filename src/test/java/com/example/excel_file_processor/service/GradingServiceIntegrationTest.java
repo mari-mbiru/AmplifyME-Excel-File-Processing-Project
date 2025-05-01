@@ -24,7 +24,10 @@ public class GradingServiceIntegrationTest {
             "'Candidate Sample Answer Sheet CorrVal Only (10 correct).xlsx','Candidate Sample Answer Sheet CorrVal Only (10 correct).xlsx',10,10,0",
             "'Candidate Sample Answer Sheet CorrVal Only - With Errors(8 correct).xlsx','Candidate Sample Answer Sheet CorrVal Only - With Errors(8 correct).xlsx',10,8,2",
             "'Candidate Sample Answer Sheet CorrVal Only (10 correct).xlsx','Candidate Sample Student Sheet CorrVal Only - (3 correct).xlsx',10,3,0",
-            "'Candidate Sample Answer Sheet CorrVal + CorrForm.xlsx','Candidate Sample Answer Sheet CorrVal + CorrForm.xlsx',10,10,0"
+            "'Candidate Sample Answer Sheet CorrVal + CorrForm.xlsx','Candidate Sample Answer Sheet CorrVal + CorrForm.xlsx',10,10,0",
+            "'Candidate Sample Answer Sheet Break In Grading Rows(10 correct).xlsx','Candidate Sample Answer Sheet Break In Grading Rows(10 correct).xlsx',10,10,0",
+            "'Candidate Sample Answer Sheet Invalid Grading Instructions(4 correct).xlsx','Candidate Sample Answer Sheet Invalid Grading Instructions(4 correct).xlsx',10,4,6",
+            "'Candidate Sample Master Sheet Value Types.xlsx','Candidate Sample Student Sheet Value Types (10 correct).xlsx',18,10,0"
     })
     @ParameterizedTest
     void gradeVariousStudentFiles(String masterFileName, String studentFileName, int max, int total, int errorCount) throws Exception {

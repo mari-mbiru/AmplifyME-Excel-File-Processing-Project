@@ -5,6 +5,7 @@ import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -59,6 +60,9 @@ public class WorkbookParser {
             case FORMULA:
                 return cell.getCellFormula();
 
+            case ERROR:
+                byte errorCode = cell.getErrorCellValue();
+                return FormulaError.forInt(errorCode).getString();
             //Includes the case where cell type is BLANK.
             default:
                 return "";
