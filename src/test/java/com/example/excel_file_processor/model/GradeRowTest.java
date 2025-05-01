@@ -5,13 +5,16 @@ import com.example.excel_file_processor.util.WorkbookParser;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class GradeRowTest {
     @Mock
     WorkbookParser parser;
@@ -55,7 +58,7 @@ public class GradeRowTest {
         Cell rangeCell = mock(Cell.class);
         Cell typeCell = mock(Cell.class);
 
-        when(row.getCell(0)).thenReturn(null); // Sheet name missing
+        when(row.getCell(0)).thenReturn(null);
         when(row.getCell(1)).thenReturn(rangeCell);
         when(row.getCell(2)).thenReturn(typeCell);
 

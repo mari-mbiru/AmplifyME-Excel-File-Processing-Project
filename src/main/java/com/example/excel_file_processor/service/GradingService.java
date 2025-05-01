@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -125,7 +127,8 @@ public class GradingService {
 
     private GradingResponse buildGradingResponse(GradingResult results) {
         LocalDateTime now = LocalDateTime.now();
-        double percentage = (double) results.getTotalScore() / results.getMaxScore();
+        double percentage = BigDecimal.valueOf((double) results.getTotalScore() / results.getMaxScore() * 100).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
         return new GradingResponse(results.getTotalScore(), results.getMaxScore(), results.getErrors(), now.toString(), now.toString(), percentage);
     }
 }
