@@ -16,10 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
@@ -100,34 +97,39 @@ class WorkbookParserTest {
     }
 
     private static Stream<Arguments> cellValueProvider() {
-        Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet();
-        Row row = sheet.createRow(0);
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
 
-        row.createCell(0).setCellValue("Text");                         // STRING
-        row.createCell(1).setCellValue(123.456);                        // NUMERIC
-        row.createCell(2).setCellValue(true);                           // BOOLEAN
-        row.createCell(3).setCellFormula("SUM(A1:A1)");                 // FORMULA
-        row.createCell(4);                                              // BLANK
+            row.createCell(0).setCellValue("Text");                         // STRING
+            row.createCell(1).setCellValue(123.456);                        // NUMERIC
+            row.createCell(2).setCellValue(true);                           // BOOLEAN
+            row.createCell(3).setCellFormula("SUM(A1:A1)");                 // FORMULA
+            row.createCell(4);                                              // BLANK
 
-        Cell dateCell = row.createCell(5);
-        dateCell.setCellValue(LocalDate.of(2023, 4, 30));
-        CellStyle dateStyle = wb.createCellStyle();
-        CreationHelper creationHelper = wb.getCreationHelper();
-        dateStyle.setDataFormat(creationHelper.createDataFormat().getFormat("m/d/yy"));
-        dateCell.setCellStyle(dateStyle);
-        String expectedDate = dateCell.getDateCellValue().toString();
+            // DATE cell
+            Cell dateCell = row.createCell(5);
+            dateCell.setCellValue(LocalDate.of(2023, 4, 30));
+            CellStyle dateStyle = wb.createCellStyle();
+            CreationHelper creationHelper = wb.getCreationHelper();
+            dateStyle.setDataFormat(creationHelper.createDataFormat().getFormat("m/d/yy"));
+            dateCell.setCellStyle(dateStyle);
+            String expectedDate = dateCell.getDateCellValue().toString();
 
-        return Stream.of(
-                Arguments.of(row.getCell(0), "Text"),
-                Arguments.of(row.getCell(1), "123.456"),
-                Arguments.of(row.getCell(2), "true"),
-                Arguments.of(row.getCell(3), "SUM(A1:A1)"),
-                Arguments.of(row.getCell(4), ""),
-                Arguments.of(row.getCell(5), expectedDate),
-                Arguments.of(null, "")
-        );
+            return Stream.of(
+                    Arguments.of(row.getCell(0), "Text"),
+                    Arguments.of(row.getCell(1), "123.456"),
+                    Arguments.of(row.getCell(2), "true"),
+                    Arguments.of(row.getCell(3), "SUM(A1:A1)"),
+                    Arguments.of(row.getCell(4), ""),
+                    Arguments.of(row.getCell(5), expectedDate),
+                    Arguments.of(null, "")
+            );
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to prepare test data", e);
+        }
     }
+
 
 
     @ParameterizedTest
