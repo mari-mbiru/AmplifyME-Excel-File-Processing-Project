@@ -19,11 +19,15 @@ public enum ComparisonType {
 
         String cleaned = value.trim().toLowerCase();
         for (ComparisonType type : values()) {
-            if (type.comparisonName.toLowerCase().equals(cleaned)) {
+            if (type.comparisonName.equalsIgnoreCase(cleaned)) {
                 return type;
             }
         }
         throw new IllegalArgumentException("Unknown grading type: " + value);
     }
 
+    @Override
+    public String toString() {
+        return comparisonName;
+    }
 }

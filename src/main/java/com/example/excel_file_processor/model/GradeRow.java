@@ -34,7 +34,7 @@ public class GradeRow {
     }
 
     public boolean hasError() {
-        return Objects.isNull(this.errorMessage);
+        return Objects.nonNull(this.errorMessage);
     }
 
     public static GradeRow fromRow(Row row, WorkbookParser parser) {
