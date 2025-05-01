@@ -10,8 +10,7 @@ public class GradingHandlerFactory {
 
     public AbstractGradingHandler createHandler(ComparisonType type, Sheet targetSheet, WorkbookParser parser) {
         return switch (type) {
-            case CORRECT_VALUE, CORRECT_FORMULA -> new CorrValHandler(targetSheet, parser);
-            default -> throw new IllegalArgumentException("Unsupported comparison type: " + type);
+            case CORRECT_VALUE, CORRECT_FORMULA -> new StringValueGradingHandler(targetSheet, parser);
         };
     }
 }
