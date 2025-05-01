@@ -15,9 +15,9 @@ public class StringValueGradingHandler extends GradingHandler {
     public void onCell(Cell cell, CellWalkContext cellWalkContext) {
         String targetValue = getParser().getCellValueAsString(cell);
 
-        String gradingValue = getGradingCellValueFromMasterTargetCell(cell);
+        String studentValue = getGradingCellValueFromMasterCellCoords(cell);
 
-        if (targetValue.equals(gradingValue)) {
+        if (targetValue.equals(studentValue)) {
             pass();
         } else {
             fail();

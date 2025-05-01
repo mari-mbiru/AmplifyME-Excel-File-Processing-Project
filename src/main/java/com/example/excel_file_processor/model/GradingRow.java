@@ -6,10 +6,8 @@ import lombok.Getter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
-import java.util.Objects;
-
 @Getter
-public class GradeRow {
+public class GradingRow {
     String sheetName;
     String gradingRange;
     String rawComparisonType;
@@ -17,7 +15,7 @@ public class GradeRow {
     String errorMessage;
 
 
-    public GradeRow(String sheetName, String gradingRange, String comparisonType) {
+    public GradingRow(String sheetName, String gradingRange, String comparisonType) {
         try {
             this.sheetName = sheetName;
             this.gradingRange = gradingRange;
@@ -29,15 +27,15 @@ public class GradeRow {
         }
     }
 
-    public GradeRow(String errorMessage) {
+    public GradingRow(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
     public boolean hasError() {
-        return Objects.nonNull(this.errorMessage);
+        return this.errorMessage != null;
     }
 
-    public static GradeRow fromRow(Row row, WorkbookParser parser) {
+    public static GradingRow fromRow(Row row, WorkbookParser parser) {
         Cell sheetCell = row.getCell(0);
         Cell rangeCell = row.getCell(1);
         Cell typeCell = row.getCell(2);
@@ -51,18 +49,18 @@ public class GradeRow {
         }
 
         if (sheetName == null || sheetName.isEmpty()) {
-            return new GradeRow("Error Grading Value: Sheet name to grade is Blank or Empty");
+            return new GradingRow("Error Grading Value: Sheet name to grade is Blank or Empty");
         }
 
         if (range == null || range.isEmpty()) {
-            return new GradeRow("Error Grading Value: Rage to grade is Blank or Empty");
+            return new GradingRow("Error Grading Value: Rage to grade is Blank or Empty");
         }
 
         if (type == null || type.isEmpty()) {
-            return new GradeRow("Error Grading Value: Grading type to use is Blank or Empty");
+            return new GradingRow("Error Grading Value: Grading type to use is Blank or Empty");
         }
 
-        return new GradeRow(sheetName, range, type);
+        return new GradingRow(sheetName, range, type);
     }
 
 }

@@ -69,7 +69,7 @@ class StringValueGradingHandlerTest {
         }
 
         @Override
-        protected String getGradingCellValueFromMasterTargetCell(Cell cell) {
+        protected String getGradingCellValueFromMasterCellCoords(Cell cell) {
             return expectedGradingValue;
         }
 

@@ -1,9 +1,9 @@
 package com.example.excel_file_processor.service;
 
 
-import com.example.excel_file_processor.model.GradeRow;
 import com.example.excel_file_processor.model.GradingResponse;
 import com.example.excel_file_processor.model.GradingResult;
+import com.example.excel_file_processor.model.GradingRow;
 import com.example.excel_file_processor.model.SimpleAppException;
 import com.example.excel_file_processor.util.GradingHandler.GradingHandler;
 import com.example.excel_file_processor.util.GradingHandler.GradingHandlerFactory;
@@ -33,14 +33,15 @@ public class GradingService {
 
     private final WorkbookParser workbookParser;
     private final GradingHandlerFactory gradingHandlerFactory;
-    public GradingResponse gradeMasterAndStudentFiles(MultipartFile masterFile, MultipartFile studentFile) {
+
+    public GradingResponse gradeWorkbook(MultipartFile masterFile, MultipartFile studentFile) {
         Workbook masterWorkbook = parseWorkbook(masterFile);
         Workbook studentWorkbook = parseWorkbook(studentFile);
 
         Sheet gradingSheet = extractGradingSheet(masterWorkbook);
-        List<GradeRow> gradingInstructions = extractGradingInstructions(gradingSheet);
+        List<GradingRow> gradingInstructions = extractGradingRows(gradingSheet);
 
-        GradingResult results = applyGradingInstructions(gradingInstructions, masterWorkbook, studentWorkbook);
+        GradingResult results = applyGrading(gradingInstructions, masterWorkbook, studentWorkbook);
 
         return buildGradingResponse(results);
     }
@@ -63,15 +64,15 @@ public class GradingService {
         return sheet;
     }
 
-    private List<GradeRow> extractGradingInstructions(Sheet gradingSheet) {
-        List<GradeRow> instructions = new ArrayList<>();
+    private List<GradingRow> extractGradingRows(Sheet gradingSheet) {
+        List<GradingRow> instructions = new ArrayList<>();
         Iterator<Row> iterator = gradingSheet.rowIterator();
 
         if (iterator.hasNext()) iterator.next(); // skip header row
 
         while (iterator.hasNext()) {
             Row row = iterator.next();
-            GradeRow gradeRow = GradeRow.fromRow(row, workbookParser);
+            GradingRow gradeRow = GradingRow.fromRow(row, workbookParser);
             if (gradeRow != null) {
                 instructions.add(gradeRow);
             }
@@ -80,12 +81,13 @@ public class GradingService {
         return instructions;
     }
 
-    private GradingResult applyGradingInstructions(List<GradeRow> instructions,
-                                                   Workbook master,
-                                                   Workbook student) {
+    private GradingResult applyGrading(List<GradingRow> instructions,
+                                       Workbook master,
+                                       Workbook student) {
         GradingResult result = new GradingResult();
+        result.setMaxScore(instructions.size());
 
-        for (GradeRow instruction : instructions) {
+        for (GradingRow instruction : instructions) {
             if (instruction.hasError()) {
                 result.addError(instruction.getErrorMessage());
                 continue;
@@ -112,7 +114,6 @@ public class GradingService {
                 result.addError("Error grading value: No cells found in master sheet: " + instruction.getSheetName() + " cell: " + instruction.getGradingRange());
             }
         }
-        result.setMaxScore(instructions.size());
 
         return result;
     }
@@ -120,7 +121,6 @@ public class GradingService {
     private Sheet requireSheet(Sheet sheet, String sheetName, String role, GradingResult result) {
         if (sheet == null) {
             result.getErrors().add("Error grading value: No sheet found in " + role + " sheet: " + sheetName);
-            result.setMaxScore(result.getMaxScore() + 1);
         }
         return sheet;
     }

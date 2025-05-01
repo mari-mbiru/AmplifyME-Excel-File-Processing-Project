@@ -1,7 +1,7 @@
 package com.example.excel_file_processor.service;
 
-import com.example.excel_file_processor.model.GradeRow;
 import com.example.excel_file_processor.model.GradingResponse;
+import com.example.excel_file_processor.model.GradingRow;
 import com.example.excel_file_processor.model.enums.ComparisonType;
 import com.example.excel_file_processor.util.GradingHandler.GradingHandler;
 import com.example.excel_file_processor.util.GradingHandler.GradingHandlerFactory;
@@ -67,13 +67,13 @@ class GradingServiceTest {
         Row mockRow = mock(Row.class);
         when(gradingSheet.rowIterator()).thenReturn(List.of(mock(Row.class), mockRow).iterator());
 
-        GradeRow instruction = mock(GradeRow.class);
+        GradingRow instruction = mock(GradingRow.class);
         when(instruction.hasError()).thenReturn(false);
         when(instruction.getGradingRange()).thenReturn("A1");
         when(instruction.getSheetName()).thenReturn("Sheet1");
         when(instruction.getComparisonType()).thenReturn(type);
 
-        mockStatic(GradeRow.class).when(() -> GradeRow.fromRow(eq(mockRow), eq(workbookParser))).thenReturn(instruction);
+        mockStatic(GradingRow.class).when(() -> GradingRow.fromRow(eq(mockRow), eq(workbookParser))).thenReturn(instruction);
 
         when(workbookParser.getRangeAddressFromRangeString("A1")).thenReturn(new CellRangeAddress(0, 0, 0, 0));
         when(masterWorkbook.getSheet("Sheet1")).thenReturn(masterSheet);
@@ -83,7 +83,7 @@ class GradingServiceTest {
         when(gradingHandler.isPassing()).thenReturn(true);
 
         // When
-        GradingResponse response = gradingService.gradeMasterAndStudentFiles(masterFile, studentFile);
+        GradingResponse response = gradingService.gradeWorkbook(masterFile, studentFile);
 
         // Then
         assertEquals(1, response.totalScore());

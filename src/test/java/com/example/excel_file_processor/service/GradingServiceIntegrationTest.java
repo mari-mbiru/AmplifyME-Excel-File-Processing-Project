@@ -28,11 +28,15 @@ public class GradingServiceIntegrationTest {
     })
     @ParameterizedTest
     void gradeVariousStudentFiles(String masterFileName, String studentFileName, int max, int total, int errorCount) throws Exception {
+
+        //Given
         MultipartFile masterFile = getTestFile("fixtures/" + masterFileName);
         MultipartFile studentFile = getTestFile("fixtures/" + studentFileName);
 
-        GradingResponse response = gradingService.gradeMasterAndStudentFiles(masterFile, studentFile);
+        //When
+        GradingResponse response = gradingService.gradeWorkbook(masterFile, studentFile);
 
+        //Then
         assertEquals(max, response.maxScore());
         assertEquals(total, response.totalScore());
         assertEquals(errorCount, response.errors().size());

@@ -35,7 +35,7 @@ public class GradingControllerTest {
         GradingResponse mockResponse = new GradingResponse(9.0, 10.0, List.of("Error Grading"), dateString, dateString, 90.0);
 
         // When
-        Mockito.when(gradingService.gradeMasterAndStudentFiles(Mockito.any(), Mockito.any()))
+        Mockito.when(gradingService.gradeWorkbook(Mockito.any(), Mockito.any()))
                 .thenReturn(mockResponse);
 
         MockMultipartFile masterFile = new MockMultipartFile("master_file", "master.xlsx", "application/vnd.ms-excel", new byte[10]);

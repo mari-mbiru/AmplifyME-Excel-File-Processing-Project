@@ -59,7 +59,7 @@ public class WorkbookParser {
             case FORMULA:
                 return cell.getCellFormula();
 
-            //Includes the case cell type is BLANK.
+            //Includes the case where cell type is BLANK.
             default:
                 return "";
         }

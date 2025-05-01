@@ -29,7 +29,7 @@ public class GradingController {
             throw new SimpleAppException("Only .xlsx files are supported for grading.", HttpStatus.BAD_REQUEST);
         }
 
-        GradingResponse result = gradingService.gradeMasterAndStudentFiles(masterFile, studentFile);
+        GradingResponse result = gradingService.gradeWorkbook(masterFile, studentFile);
         return ResponseEntity.ok(result);
     }
 }

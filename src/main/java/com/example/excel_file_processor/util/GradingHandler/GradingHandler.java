@@ -7,29 +7,27 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.cellwalk.CellHandler;
 
-import java.util.Objects;
-
 @Getter
 public abstract class GradingHandler implements CellHandler {
 
-    private final Sheet gradingSheet;
+    private final Sheet studentSheet;
     private final WorkbookParser parser;
 
     private boolean passes = true;
     private String error = "";
 
-    protected GradingHandler(Sheet gradingSheet, WorkbookParser parser) {
-        this.gradingSheet = gradingSheet;
+    protected GradingHandler(Sheet studentSheet, WorkbookParser parser) {
+        this.studentSheet = studentSheet;
         this.parser = parser;
     }
 
-    protected String getGradingCellValueFromMasterTargetCell(Cell targetCell) {
+    protected String getGradingCellValueFromMasterCellCoords(Cell targetCell) {
 
-        Row gradingRow = getGradingSheet().getRow(targetCell.getRowIndex());
-        if (Objects.isNull(gradingRow)) return null;
+        Row gradingRow = getStudentSheet().getRow(targetCell.getRowIndex());
+        if (gradingRow == null) return null;
 
         Cell gradingCell = gradingRow.getCell(targetCell.getColumnIndex());
-        if (Objects.isNull(gradingCell)) return null;
+        if (gradingCell == null) return null;
 
         return parser.getCellValueAsString(gradingCell);
     }
