@@ -71,7 +71,7 @@ public class GradingService {
             Row row = iterator.next();
             GradeRow gradeRow = GradeRow.fromRow(row, workbookParser);
             if (gradeRow != null) {
-                instructions.add(GradeRow.fromRow(row, workbookParser));
+                instructions.add(gradeRow);
             }
         }
 
@@ -85,28 +85,18 @@ public class GradingService {
 
         for (GradeRow instruction : instructions) {
             if (instruction.hasError()) {
-                result.getErrors().add(instruction.getErrorMessage());
-                result.setMaxScore(result.getMaxScore() + 1);
+                result.addError(instruction.getErrorMessage());
                 continue;
             }
 
             try {
                 CellRangeAddress range = workbookParser.getRangeAddressFromRangeString(instruction.getGradingRange());
 
-                Sheet targetSheet = master.getSheet(instruction.getSheetName());
-                Sheet studentSheet = student.getSheet(instruction.getSheetName());
+                Sheet targetSheet = requireSheet(master.getSheet(instruction.getSheetName()), instruction.getSheetName(), "master", result);
+                if (targetSheet == null) continue;
 
-                if (targetSheet == null) {
-                    result.getErrors().add("Error grading value: No sheet found in master sheet: " + instruction.getSheetName());
-                    result.setMaxScore(result.getMaxScore() + 1);
-                    continue;
-                }
-
-                if (studentSheet == null) {
-                    result.getErrors().add("Error grading value: No sheet found in student sheet: " + instruction.getSheetName());
-                    result.setMaxScore(result.getMaxScore() + 1);
-                    continue;
-                }
+                Sheet studentSheet = requireSheet(student.getSheet(instruction.getSheetName()), instruction.getSheetName(), "student", result);
+                if (studentSheet == null) continue;
 
                 CellWalk cellWalk = new CellWalk(targetSheet, range);
                 cellWalk.setTraverseEmptyCells(true);
@@ -114,25 +104,30 @@ public class GradingService {
                 cellWalk.traverse(grader);
 
                 if (grader.isPassing()) {
-                    result.setTotalScore(result.getTotalScore() + 1);
-                    result.setMaxScore(result.getMaxScore() + 1);
+                    result.incrementTotalScore();
                 } else {
                     result.getErrors().add("Value mismatch");
                 }
             } catch (IllegalArgumentException e) {
                 result.getErrors().add("Error grading value: No cells found in master sheet: " + instruction.getSheetName() + " cell: " + instruction.getGradingRange());
-            } finally {
-                result.setMaxScore(result.getMaxScore() + 1);
             }
         }
+        result.setMaxScore(instructions.size());
 
         return result;
     }
 
-    private GradingResponse buildGradingResponse(GradingResult results) {
-
-        double percentage = (double) results.getTotalScore() / results.getMaxScore();
-        return new GradingResponse(results.getTotalScore(), results.getMaxScore(), results.getErrors(), LocalDateTime.now().toString(), LocalDateTime.now().toString(), percentage);
+    private Sheet requireSheet(Sheet sheet, String sheetName, String role, GradingResult result) {
+        if (sheet == null) {
+            result.getErrors().add("Error grading value: No sheet found in " + role + " sheet: " + sheetName);
+            result.setMaxScore(result.getMaxScore() + 1);
+        }
+        return sheet;
     }
 
+    private GradingResponse buildGradingResponse(GradingResult results) {
+        LocalDateTime now = LocalDateTime.now();
+        double percentage = (double) results.getTotalScore() / results.getMaxScore();
+        return new GradingResponse(results.getTotalScore(), results.getMaxScore(), results.getErrors(), now.toString(), now.toString(), percentage);
+    }
 }

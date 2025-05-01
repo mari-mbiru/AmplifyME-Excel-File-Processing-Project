@@ -19,5 +19,13 @@ public class GradingResult {
         this.maxScore = 0;
         this.errors = new ArrayList<>();
     }
+
+    public void incrementTotalScore() {
+        this.totalScore++;
+    }
+
+    public void addError(String errorMessage) {
+        this.errors.add(errorMessage);
+    }
 }
 
