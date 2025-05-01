@@ -44,6 +44,8 @@ public class GradingRow {
         String range = rangeCell != null ? parser.getCellValueAsString(rangeCell) : null;
         String type = typeCell != null ? parser.getCellValueAsString(typeCell) : null;
 
+        //This means the row was processed because of a non-empty cell that does not fall within the three columns that define grading.
+        //Therefore, not a valid row and should be skipped/ignored.
         if ((type == null || type.isEmpty()) && (sheetName == null || sheetName.isEmpty()) && (range == null || range.isEmpty())) {
             return null;
         }

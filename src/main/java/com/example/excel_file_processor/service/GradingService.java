@@ -73,6 +73,8 @@ public class GradingService {
         while (iterator.hasNext()) {
             Row row = iterator.next();
             GradingRow gradeRow = GradingRow.fromRow(row, workbookParser);
+
+            //Grade row is null when all grading columns are empty or blank
             if (gradeRow != null) {
                 instructions.add(gradeRow);
             }

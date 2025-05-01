@@ -66,12 +66,12 @@ docker run -p 8080:8080 excel-grader
 
 ```
 {
-  "totalScore": 8.0,
-  "maxScore": 10.0,
+  "totalScore": 8,
+  "maxScore": 10,
   "errors": ["Error grading value: ..."],
   "createdAt": "2025-04-24T14:50:30.111779",
   "updatedAt": "2025-04-24T14:50:30.111780",
-  "percentage": 80.0
+  "percentage": 80
 }
 
 ``` 
@@ -84,6 +84,8 @@ docker run -p 8080:8080 excel-grader
 - The Master workbook will always contain a worksheet called "Grading". The "Grading" worksheet will have the first
   three columns containing the Worksheet Name, Cell Range and Comparison Type for grading. The first row will always be
   a header row describing these columns.
+- A row in the grading sheet where the first three columns are empty will be assumed to be an empty row that should not
+  affect max score.
 - The files submitted will use the new .xlsx (XML Spreadsheet Format) format as it has been in use since 2007.
 - The master and student files will be relatively small (less than ten thousand rows).
 - Grading types "CorrForm" and "CorrVal" are only valid as spelled. Lowercase values equivalents of this are allowed.
@@ -94,7 +96,8 @@ docker run -p 8080:8080 excel-grader
 - The Apache POI CellWalk Api is used for traversing the cell ranges defined in the grading rows. This enables efficient
   traversal of multidimensional cell ranges.
 - Grading is done by implementing the CellHandler interface in an abstract Grading class. This enables the use of
-  different grading strategies in case new Grading types are added.
+  different grading strategies in case new Grading types are added. This design decision when I thought the CorrForm and
+  CorrVal would require separate handlers.
 - Cell value comparison for both CorrVal and CorrForm approaches is done by converting all cell values to a string
   regardless of type. For NUMERIC type cells only significant digits are maintained during conversion.
 - Error handling is centralized using @ControllerAdvice to return error messages that are clearer to read and determine
