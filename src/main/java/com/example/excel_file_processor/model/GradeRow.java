@@ -1,7 +1,7 @@
 package com.example.excel_file_processor.model;
 
 import com.example.excel_file_processor.model.enums.ComparisonType;
-import com.example.excel_file_processor.util.ExcelWorkbookParser;
+import com.example.excel_file_processor.util.WorkbookParser;
 import lombok.Getter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,7 +37,7 @@ public class GradeRow {
         return Objects.isNull(this.errorMessage);
     }
 
-    public static GradeRow fromRow(Row row, ExcelWorkbookParser parser) {
+    public static GradeRow fromRow(Row row, WorkbookParser parser) {
         Cell sheetCell = row.getCell(0);
         Cell rangeCell = row.getCell(1);
         Cell typeCell = row.getCell(2);

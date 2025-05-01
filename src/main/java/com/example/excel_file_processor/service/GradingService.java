@@ -5,9 +5,9 @@ import com.example.excel_file_processor.model.GradeRow;
 import com.example.excel_file_processor.model.GradingResponse;
 import com.example.excel_file_processor.model.GradingResult;
 import com.example.excel_file_processor.model.SimpleAppException;
-import com.example.excel_file_processor.util.ExcelWorkbookParser;
 import com.example.excel_file_processor.util.GradingHandler.AbstractGradingHandler;
 import com.example.excel_file_processor.util.GradingHandler.GradingHandlerFactory;
+import com.example.excel_file_processor.util.WorkbookParser;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -29,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GradingService {
 
-    private final ExcelWorkbookParser workbookParser;
+    private final WorkbookParser workbookParser;
     private final GradingHandlerFactory gradingHandlerFactory;
     public GradingResponse gradeMasterAndStudentFiles(MultipartFile masterFile, MultipartFile studentFile) {
         Workbook masterWorkbook = parseWorkbook(masterFile);
@@ -45,7 +45,7 @@ public class GradingService {
 
     private Workbook parseWorkbook(MultipartFile file) {
         try {
-            return workbookParser.getWorkbookFromFile(file);
+            return workbookParser.loadWorkBook(file);
         } catch (IOException e) {
             throw new SimpleAppException("There was a problem parsing one of the workbooks.", HttpStatus.UNPROCESSABLE_ENTITY);
         } catch (IllegalArgumentException e) {

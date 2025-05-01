@@ -1,6 +1,6 @@
 package com.example.excel_file_processor.util.GradingHandler;
 
-import com.example.excel_file_processor.util.ExcelWorkbookParser;
+import com.example.excel_file_processor.util.WorkbookParser;
 import lombok.Getter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,12 +13,12 @@ import java.util.Objects;
 public abstract class AbstractGradingHandler implements CellHandler {
 
     private final Sheet gradingSheet;
-    private final ExcelWorkbookParser parser;
+    private final WorkbookParser parser;
 
     private boolean passes = true;
     private String error = "";
 
-    protected AbstractGradingHandler(Sheet gradingSheet, ExcelWorkbookParser parser) {
+    protected AbstractGradingHandler(Sheet gradingSheet, WorkbookParser parser) {
         this.gradingSheet = gradingSheet;
         this.parser = parser;
     }

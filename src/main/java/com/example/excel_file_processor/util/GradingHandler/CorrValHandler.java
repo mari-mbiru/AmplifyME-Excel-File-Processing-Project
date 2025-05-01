@@ -1,13 +1,13 @@
 package com.example.excel_file_processor.util.GradingHandler;
 
-import com.example.excel_file_processor.util.ExcelWorkbookParser;
+import com.example.excel_file_processor.util.WorkbookParser;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.cellwalk.CellWalkContext;
 
 public class CorrValHandler extends AbstractGradingHandler {
 
-    protected CorrValHandler(Sheet gradingSheet, ExcelWorkbookParser parser) {
+    protected CorrValHandler(Sheet gradingSheet, WorkbookParser parser) {
         super(gradingSheet, parser);
     }
 

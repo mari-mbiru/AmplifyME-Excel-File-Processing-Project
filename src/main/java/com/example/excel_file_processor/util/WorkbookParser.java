@@ -1,5 +1,8 @@
 package com.example.excel_file_processor.util;
 
+import org.apache.poi.EmptyFileException;
+import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -10,24 +13,31 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class ExcelWorkbookParser {
+public class WorkbookParser {
 
     private static final Pattern validRangePattern = Pattern.compile("^(?<start>[A-Z]{1,3}[0-9]{1,7})(?::(?<end>[A-Z]{1,3}[0-9]{1,7}))?$");
 
-    public Workbook getWorkbookFromFile(MultipartFile file) throws IOException {
+    public Workbook loadWorkBook(MultipartFile file) throws IOException {
+        String filename = Optional.of(file.getOriginalFilename()).orElse("").toLowerCase();
 
-        if (file.getOriginalFilename().endsWith(".xlsx")) {
-            return new XSSFWorkbook(file.getInputStream());
-        } else {
+        if (!filename.endsWith(".xlsx")) {
             throw new IllegalArgumentException("Unsupported file format. Only .xlsx files are supported");
         }
+
+        try (InputStream is = file.getInputStream()) {
+            return new XSSFWorkbook(is);
+        } catch (POIXMLException | OLE2NotOfficeXmlFileException | EmptyFileException e) {
+            throw new IllegalArgumentException("The uploaded file is not a valid .xlsx Excel file", e);
+        }
     }
+
 
     public String getCellValueAsString(Cell cell) {
         if (cell == null) return "";
@@ -77,11 +87,11 @@ public class ExcelWorkbookParser {
             throw new IllegalArgumentException("Invalid cell range format: " + rangeString);
         }
 
-        String startCell = matcher.group("start");
-        String endCell = Optional.ofNullable(matcher.group("end")).orElse(startCell);
+        String startCellAddress = matcher.group("start");
+        String endCellAddress = Optional.ofNullable(matcher.group("end")).orElse(startCellAddress);
 
-        CellReference start = new CellReference(startCell);
-        CellReference end = new CellReference(endCell);
+        CellReference start = new CellReference(startCellAddress);
+        CellReference end = new CellReference(endCellAddress);
 
         if (start.getRow() > end.getRow() || start.getCol() > end.getCol()) {
             throw new IllegalArgumentException(String.format(
