@@ -5,7 +5,7 @@ import com.example.excel_file_processor.model.GradeRow;
 import com.example.excel_file_processor.model.GradingResponse;
 import com.example.excel_file_processor.model.GradingResult;
 import com.example.excel_file_processor.model.SimpleAppException;
-import com.example.excel_file_processor.util.GradingHandler.AbstractGradingHandler;
+import com.example.excel_file_processor.util.GradingHandler.GradingHandler;
 import com.example.excel_file_processor.util.GradingHandler.GradingHandlerFactory;
 import com.example.excel_file_processor.util.WorkbookParser;
 import lombok.RequiredArgsConstructor;
@@ -100,16 +100,14 @@ public class GradingService {
 
                 CellWalk cellWalk = new CellWalk(targetSheet, range);
                 cellWalk.setTraverseEmptyCells(true);
-                AbstractGradingHandler grader = gradingHandlerFactory.createHandler(instruction.getComparisonType(), studentSheet, workbookParser);
+                GradingHandler grader = gradingHandlerFactory.createHandler(instruction.getComparisonType(), studentSheet, workbookParser);
                 cellWalk.traverse(grader);
 
                 if (grader.isPassing()) {
                     result.incrementTotalScore();
-                } else {
-                    result.getErrors().add("Value mismatch");
                 }
             } catch (IllegalArgumentException e) {
-                result.getErrors().add("Error grading value: No cells found in master sheet: " + instruction.getSheetName() + " cell: " + instruction.getGradingRange());
+                result.addError("Error grading value: No cells found in master sheet: " + instruction.getSheetName() + " cell: " + instruction.getGradingRange());
             }
         }
         result.setMaxScore(instructions.size());

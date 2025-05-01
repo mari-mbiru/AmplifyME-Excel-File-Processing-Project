@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GradingHandlerFactory {
 
-    public AbstractGradingHandler createHandler(ComparisonType type, Sheet targetSheet, WorkbookParser parser) {
+    public GradingHandler createHandler(ComparisonType type, Sheet targetSheet, WorkbookParser parser) {
         return switch (type) {
             case CORRECT_VALUE, CORRECT_FORMULA -> new StringValueGradingHandler(targetSheet, parser);
         };

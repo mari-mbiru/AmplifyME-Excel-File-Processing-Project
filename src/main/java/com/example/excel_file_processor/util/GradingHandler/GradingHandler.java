@@ -10,7 +10,7 @@ import org.apache.poi.ss.util.cellwalk.CellHandler;
 import java.util.Objects;
 
 @Getter
-public abstract class AbstractGradingHandler implements CellHandler {
+public abstract class GradingHandler implements CellHandler {
 
     private final Sheet gradingSheet;
     private final WorkbookParser parser;
@@ -18,7 +18,7 @@ public abstract class AbstractGradingHandler implements CellHandler {
     private boolean passes = true;
     private String error = "";
 
-    protected AbstractGradingHandler(Sheet gradingSheet, WorkbookParser parser) {
+    protected GradingHandler(Sheet gradingSheet, WorkbookParser parser) {
         this.gradingSheet = gradingSheet;
         this.parser = parser;
     }

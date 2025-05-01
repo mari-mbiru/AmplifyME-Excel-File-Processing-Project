@@ -3,7 +3,7 @@ package com.example.excel_file_processor.service;
 import com.example.excel_file_processor.model.GradeRow;
 import com.example.excel_file_processor.model.GradingResponse;
 import com.example.excel_file_processor.model.enums.ComparisonType;
-import com.example.excel_file_processor.util.GradingHandler.AbstractGradingHandler;
+import com.example.excel_file_processor.util.GradingHandler.GradingHandler;
 import com.example.excel_file_processor.util.GradingHandler.GradingHandlerFactory;
 import com.example.excel_file_processor.util.WorkbookParser;
 import org.apache.poi.ss.usermodel.Row;
@@ -48,7 +48,7 @@ class GradingServiceTest {
     Sheet studentSheet;
 
     @Mock
-    AbstractGradingHandler gradingHandler;
+    GradingHandler gradingHandler;
 
     @InjectMocks
     GradingService gradingService;

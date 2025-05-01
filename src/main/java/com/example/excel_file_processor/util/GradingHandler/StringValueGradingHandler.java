@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.cellwalk.CellWalkContext;
 
-public class StringValueGradingHandler extends AbstractGradingHandler {
+public class StringValueGradingHandler extends GradingHandler {
 
     protected StringValueGradingHandler(Sheet gradingSheet, WorkbookParser parser) {
         super(gradingSheet, parser);
